@@ -1,0 +1,626 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Помощник GTA 5 RP</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600&family=JetBrains+Mono:wght@500;700&family=Unbounded:wght@500;700&display=swap">
+<style>
+/* Layout: одна колонка до 560px, липкая шапка с итогами дня, нижняя панель из пяти вкладок. */
+:root{
+  --bg:#F2F3F8; --surface:#FFFFFF; --surface2:#E8EAF2; --line:#D3D7E3;
+  --fg:#161A2A; --muted:#5B6379;
+  --accent:#8F5700; --accent-bg:#F2B33D; --on-accent:#1B1304;
+  --good:#16784B; --bad:#B3261E;
+  --c-easy:#1E9E5A; --c-mid:#C77A0A; --c-coop:#2F6FE0; --c-skip:#7B8299; --c-fac:#D4700F;
+  --f-display:'Unbounded','Arial Black',sans-serif;
+  --f-body:'Golos Text',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --f-mono:'JetBrains Mono',ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0D1020; --surface:#161A2E; --surface2:#1F2442; --line:#2A3050;
+    --fg:#E8EAF4; --muted:#8F97B4;
+    --accent:#F2B33D; --accent-bg:#F2B33D; --on-accent:#1B1304;
+    --good:#4CC38A; --bad:#FF7070;
+    --c-easy:#3DCB7F; --c-mid:#F0A030; --c-coop:#5B93FF; --c-skip:#8A91A8; --c-fac:#F58A24;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0D1020; --surface:#161A2E; --surface2:#1F2442; --line:#2A3050;
+  --fg:#E8EAF4; --muted:#8F97B4;
+  --accent:#F2B33D; --accent-bg:#F2B33D; --on-accent:#1B1304;
+  --good:#4CC38A; --bad:#FF7070;
+  --c-easy:#3DCB7F; --c-mid:#F0A030; --c-coop:#5B93FF; --c-skip:#8A91A8; --c-fac:#F58A24;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{
+  background:var(--bg); color:var(--fg); font-family:var(--f-body); font-size:15px; line-height:1.45;
+  padding-block:0;
+  padding-left:max(16px,env(safe-area-inset-left,0px));
+  padding-right:max(16px,env(safe-area-inset-right,0px));
+}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+.app{max-width:560px;margin:0 auto;padding-bottom:92px}
+.app.wide{max-width:1120px}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:9;background:var(--bg);padding:12px 0 10px;border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.plate{font-family:var(--f-display);font-weight:700;font-size:11px;letter-spacing:.06em;background:var(--accent-bg);color:var(--on-accent);padding:5px 7px;border-radius:3px;border:2px solid var(--on-accent);flex:none}
+h1{font-family:var(--f-display);font-weight:500;font-size:14px;margin:0;flex:1;min-width:0;text-wrap:balance}
+.stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:8px 10px;min-width:0}
+.stat span{display:block;font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.stat b{display:block;font-family:var(--f-mono);font-size:16px;font-variant-numeric:tabular-nums;overflow:hidden;text-overflow:ellipsis}
+
+h2{font-family:var(--f-display);font-weight:500;font-size:11.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);margin:22px 0 10px}
+.stack{display:grid;gap:8px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:12px;min-width:0}
+.card.done{border-color:var(--good)}
+.rowtop{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.name{font-weight:600;min-width:0;overflow-wrap:anywhere}
+.meta{font-size:12.5px;color:var(--muted)}
+.tag{font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);border:1px solid var(--line);border-radius:3px;padding:1px 5px;margin-left:8px;vertical-align:middle}
+.badge{font-size:11px;font-weight:600;color:var(--accent);background:var(--surface2);border-radius:3px;padding:2px 7px;white-space:nowrap}
+.badge.good{color:var(--good)}
+.time{font-family:var(--f-mono);font-weight:700;font-size:28px;font-variant-numeric:tabular-nums;margin:6px 0 8px}
+.bar{height:4px;background:var(--surface2);border-radius:2px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--accent-bg);transition:width 1s linear}
+.card.done .bar i{background:var(--good)}
+.actions{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.actions .grow{flex:1}
+
+.btn{min-height:42px;padding:0 14px;border-radius:6px;border:1px solid var(--line);background:var(--surface2);font-weight:600;cursor:pointer}
+.btn.pri{background:var(--accent-bg);border-color:var(--accent-bg);color:var(--on-accent)}
+.btn.sm{min-height:34px;padding:0 10px;font-size:13px}
+.btn.ghost{background:transparent}
+.btn.del{color:var(--bad);background:transparent}
+
+.form{display:grid;gap:8px}
+.fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(104px,1fr));gap:8px}
+label{display:grid;gap:4px;font-size:12px;color:var(--muted);min-width:0}
+input,select,textarea{width:100%;min-height:42px;font-size:16px;padding:8px 10px;border:1px solid var(--line);border-radius:6px;background:var(--bg);min-width:0}
+textarea{min-height:84px;resize:vertical}
+.check{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--fg)}
+.check input{width:22px;height:22px;min-height:0;flex:none;accent-color:var(--accent-bg)}
+
+.banner{display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--surface2);border:1px solid var(--line);border-radius:6px;padding:10px 12px;margin-top:14px;font-size:13px}
+.note{font-size:12.5px;color:var(--muted);margin:10px 0 0}
+
+.week{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px;height:104px}
+.col{display:grid;grid-template-rows:minmax(0,1fr) auto;gap:4px;text-align:center;font-size:11px;color:var(--muted)}
+.track{display:flex;align-items:flex-end;min-height:0}
+.track i{display:block;width:100%;height:var(--h);min-height:2px;background:var(--accent-bg);border-radius:2px 2px 0 0}
+.col.today{color:var(--fg);font-weight:600}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin-top:10px}
+.kpi b{display:block;font-family:var(--f-mono);font-size:17px;font-variant-numeric:tabular-nums}
+.kpi span{font-size:11.5px;color:var(--muted)}
+
+.num{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.pair{display:flex;gap:14px;flex-wrap:wrap;margin-top:4px;font-size:13px}
+.rank{font-family:var(--f-display);font-size:12px;color:var(--muted);margin-right:8px}
+.score{margin-top:8px}
+
+.tbar{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px 20px;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:10px 12px;margin-top:12px}
+.tctl{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;min-width:0}
+.chk{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:var(--fg);cursor:pointer}
+.chk input,.tl input{appearance:none;-webkit-appearance:none;width:18px;height:18px;min-height:0;flex:none;margin:0;border:2px solid var(--muted);border-radius:3px;background:transparent;display:grid;place-content:center;cursor:pointer;padding:0}
+.chk input:checked,.tl input:checked{background:var(--good);border-color:var(--good)}
+.chk input:checked::after,.tl input:checked::after{content:"";width:4px;height:8px;border:solid #fff;border-width:0 2px 2px 0;transform:rotate(45deg) translate(-1px,-1px)}
+.reset{border-color:var(--bad);color:var(--bad);background:transparent}
+.online{display:flex;align-items:center;gap:8px;border:1px solid var(--accent-bg);border-radius:6px;padding:4px 8px;font-size:13px}
+.step{width:28px;height:28px;border-radius:5px;border:1px solid var(--accent-bg);background:transparent;color:var(--accent);font-weight:700;font-size:16px;line-height:1;cursor:pointer;padding:0}
+.hrs{color:var(--accent);font-weight:700;min-width:30px;text-align:center}
+.pill{background:var(--surface2);border:1px solid var(--accent-bg);color:var(--accent);border-radius:5px;padding:2px 8px;font-weight:700;font-size:12px;white-space:nowrap}
+.tsum{display:flex;gap:16px}
+.tsum div{display:grid;gap:2px;text-align:right}
+.tsum div+div{border-left:1px solid var(--line);padding-left:16px}
+.tsum span{font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted)}
+.tsum b{font-size:19px}
+.tsum b.g{color:var(--good)}
+.cats{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;margin-top:12px;align-items:start}
+.cat{border:1px solid var(--cat);border-radius:8px;background:var(--surface);overflow:hidden;min-width:0}
+.chead{width:100%;display:flex;align-items:center;gap:8px;padding:11px 12px;border:0;background:var(--surface2);background:color-mix(in srgb,var(--cat) 14%,var(--surface));cursor:pointer;text-align:left;font-weight:700;min-height:44px}
+.cn{flex:none}
+.caret{width:0;height:0;border:4px solid transparent;border-top-width:0;border-bottom-color:currentColor}
+.chead[aria-expanded="false"] .caret{border-top-width:4px;border-bottom-width:0;border-top-color:currentColor;border-bottom-color:transparent}
+.ce{margin-left:auto;font-size:12.5px;font-weight:700;color:var(--muted)}
+.ce.on{color:var(--cat)}
+.chead .caret:last-child{margin-left:auto}
+.trow{display:flex;align-items:stretch;border-top:1px solid var(--line)}
+.tl{flex:1;min-width:0;display:grid;grid-template-columns:minmax(0,1fr) 18px 52px;align-items:center;gap:10px;padding:10px 12px;cursor:pointer;font-size:13.5px;min-height:44px}
+.tt{overflow-wrap:anywhere}
+.rew{font-size:12px;font-weight:700;color:var(--muted);text-align:right}
+.trow.on{background:var(--surface2);background:color-mix(in srgb,var(--cat) 15%,var(--surface))}
+.trow.on .tt{text-decoration:line-through;color:var(--muted)}
+.trow.on .rew{color:var(--good)}
+.hb{min-width:74px;padding:0 8px;border:0;border-left:1px solid var(--line);background:transparent;color:var(--muted);font-size:12px;font-weight:600;cursor:pointer}
+.trow.off .tl{opacity:.45}
+.trow.off .tt{font-style:italic}
+.x{width:44px;border:0;border-left:1px solid var(--line);background:transparent;color:var(--bad);font-size:20px;cursor:pointer}
+.tempty{padding:12px;color:var(--muted);font-size:13px;border-top:1px solid var(--line)}
+.tadd{display:grid;grid-template-columns:minmax(0,1fr) 64px auto;gap:6px;padding:10px 12px;border-top:1px solid var(--line)}
+.tadd input{min-height:38px}
+.rules{margin-top:16px;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:10px 12px}
+.rules summary{cursor:pointer;font-weight:600;font-size:13.5px}
+.rules .fields{margin-top:10px;max-width:420px}
+.seg{display:flex;gap:6px}
+.seg button{flex:1;min-height:38px;border:1px solid var(--line);border-radius:6px;background:var(--surface);font-weight:600;font-size:13px;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--accent-bg);border-color:var(--accent-bg);color:var(--on-accent)}
+.chartcard{padding:14px 12px 12px}
+.chart{position:relative;height:210px;margin:8px 0 0 34px}
+.gl{position:absolute;left:0;right:0;height:0;border-top:1px solid var(--line)}
+.gl span{position:absolute;right:calc(100% + 6px);top:-8px;font-size:10.5px;color:var(--muted);font-family:var(--f-mono)}
+.avgl{position:absolute;left:0;right:0;height:0;border-top:1.5px dashed var(--fg);opacity:.55;z-index:2;pointer-events:none}
+.bars{position:absolute;inset:0;display:grid;grid-template-columns:repeat(var(--n),minmax(0,1fr));gap:calc(40px/var(--n) + 2px);z-index:1}
+.bcol{position:relative;border:0;background:transparent;padding:0;cursor:pointer;min-width:0;height:100%}
+.bcol i{position:absolute;left:0;right:0;bottom:0;height:var(--h);min-height:3px;background:var(--accent-bg);border-radius:3px 3px 0 0;opacity:.6}
+.bcol.sel i{opacity:1}
+.bcol.none i{background:var(--line);opacity:1;height:3px}
+.bcol .val{position:absolute;left:-6px;right:-6px;bottom:calc(var(--h) + 3px);text-align:center;font-size:10.5px;font-weight:700;font-family:var(--f-mono);color:var(--muted)}
+.bcol.sel .val{color:var(--fg)}
+.bcol.none .val{display:none}
+.many .bcol .val{display:none}
+.many .bcol.sel .val{display:block}
+.xl{display:grid;grid-template-columns:repeat(var(--n),minmax(0,1fr));gap:calc(40px/var(--n) + 2px);margin:6px 0 0 34px;font-size:10.5px;color:var(--muted);text-align:center;line-height:1.25}
+.xl span{min-width:0;white-space:nowrap}
+.xl .td{color:var(--fg);font-weight:700}
+.detail{margin-top:12px;padding-top:10px;border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;font-size:13.5px}
+
+ol.route{margin:8px 0 0;padding-left:22px;display:grid;gap:3px}
+.notebody{white-space:pre-wrap;margin:6px 0 0;overflow-wrap:anywhere}
+.empty{padding:18px 12px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:6px;font-size:13.5px}
+
+.tabs{position:fixed;left:0;right:0;bottom:0;z-index:9;background:var(--surface);border-top:1px solid var(--line);
+  padding-top:6px;padding-bottom:calc(6px + env(safe-area-inset-bottom,0px));
+  padding-left:max(8px,env(safe-area-inset-left,0px));padding-right:max(8px,env(safe-area-inset-right,0px))}
+.tabs div{max-width:560px;margin:0 auto;display:flex}
+.tab{flex:1;min-width:0;display:grid;justify-items:center;gap:2px;background:none;border:0;color:var(--muted);font-size:10.5px;padding:5px 0;min-height:48px;cursor:pointer}
+.tab svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.tab[aria-current="page"]{color:var(--accent);font-weight:600}
+#theme{width:38px;height:38px;border-radius:6px;border:1px solid var(--line);background:var(--surface);cursor:pointer;display:grid;place-items:center;flex:none;padding:0}
+#theme svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+#toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(76px + env(safe-area-inset-bottom,0px));background:var(--fg);color:var(--bg);padding:9px 14px;border-radius:6px;font-size:13.5px;font-weight:500;z-index:20;max-width:calc(100% - 32px);opacity:0;pointer-events:none;transition:opacity .15s}
+#toast.show{opacity:1}
+@media (prefers-reduced-motion: reduce){.bar i,#toast{transition:none}}
+</style>
+
+<div class="app">
+  <header class="top">
+    <div class="brand">
+      <span class="plate">RP</span>
+      <h1>Помощник GTA 5 RP</h1>
+      <button id="theme" type="button" aria-label="Сменить тему" data-act="theme">
+        <svg viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg>
+      </button>
+    </div>
+    <div class="stats" id="stats"></div>
+  </header>
+  <main id="view"></main>
+</div>
+
+<nav class="tabs" aria-label="Разделы">
+  <div id="tabs">
+    <button class="tab" type="button" data-act="tab" data-id="tasks"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M8 12l3 3 5-6"/></svg>Задания</button>
+    <button class="tab" type="button" data-act="tab" data-id="stats"><svg viewBox="0 0 24 24"><path d="M4 20h16M7 20v-7M12 20V6M17 20v-10"/></svg>Статистика</button>
+    <button class="tab" type="button" data-act="tab" data-id="timers"><svg viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l3 2M9 3h6"/></svg>Таймеры</button>
+  </div>
+</nav>
+<div id="toast" role="status"></div>
+
+<script>
+(function(){
+'use strict';
+var KEY='gta5rp-helper-v1', THEME_KEY='gta5rp-helper-theme';
+var H=3600000, D=86400000;
+var $=function(s){return document.querySelector(s);};
+var uid=function(){return Math.random().toString(36).slice(2,9);};
+function esc(s){return String(s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+function num(v){var n=parseFloat(String(v==null?'':v).replace(/\s/g,'').replace(',','.'));return isFinite(n)?n:0;}
+function money(n){return '$'+Math.round(n).toLocaleString('ru-RU');}
+function fmtN(n){return (Math.round(n*10)/10).toLocaleString('ru-RU');}
+function pad(n){return n<10?'0'+n:''+n;}
+function sum(a,k){return a.reduce(function(s,x){return s+(x[k]||0);},0);}
+function fmtDur(ms){
+  if(ms<=0)return '00:00';
+  var s=Math.floor(ms/1000),d=Math.floor(s/86400),h=Math.floor(s%86400/3600),m=Math.floor(s%3600/60),c=s%60;
+  if(d>0)return d+'д '+h+'ч '+pad(m)+'м';
+  if(h>0)return h+':'+pad(m)+':'+pad(c);
+  return pad(m)+':'+pad(c);
+}
+function fmtDate(ts){return new Date(ts).toLocaleString('ru-RU',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});}
+function startOfDay(ts){var d=new Date(ts);d.setHours(0,0,0,0);return d.getTime();}
+function dayKey(){var d=new Date();return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate();}
+
+/* Игровой день начинается в 07:00 по Москве (UTC+3, это 04:00 UTC). */
+function gameIdx(ts){return Math.floor(((ts==null?Date.now():ts)-4*H)/D);}
+function idxDate(i){return new Date(i*D).toISOString().slice(0,10);}
+function nextReset(){return (gameIdx()+1)*D+4*H;}
+function fmtDay(d){return new Date(d+'T12:00:00Z').toLocaleDateString('ru-RU',{weekday:'short',day:'numeric',month:'short',timeZone:'UTC'});}
+function dayWord(n){var a=n%100,b=n%10;return a>10&&a<20?'дней':b===1?'день':b>1&&b<5?'дня':'дней';}
+function rollover(){
+  var cur=gameIdx();
+  if(state.gameDay===cur)return false;
+  if(state.gameDay<cur){
+    var T=taskTotals(),d=idxDate(state.gameDay);
+    var done=state.tasks.filter(function(t){return t.done&&!t.hidden&&!OPTIONAL[t.cat];}).length;
+    state.history=state.history.filter(function(h){return h.d!==d;});
+    state.history.push({d:d,bp:T.earned,done:done,mult:T.mult});
+    state.history.sort(function(a,b){return a.d<b.d?-1:1;});
+    if(state.history.length>400)state.history=state.history.slice(-400);
+    state.tasks.forEach(function(t){t.done=false;});
+    
+  }
+  state.gameDay=cur;save();return true;
+}
+var OPTIONAL={fac:true};
+function makeTasks(){
+  var D={
+    easy:[['Купить лотерейный билет',1,1],['Посетить любой сайт в браузере',1,1],['Поставить лайк любой анкете в Match',1,1],['Зайти в любой канал в Brawl',1,1],['Добавить 5 видео в кинотеатре',1,1],['Арендовать киностудию',2,1],['Забить 2 гола в футболе',1,1],['Починить деталь в автосервисе',1,1],['Успешная тренировка в тире',1,1],['Поиграть 1 минуту в настольный теннис',1,1],['10 действий на ферме',1,0],['Нули в казино',2,0],['Ставка межсерверное колесо',3,0],['Забросить 2 мяча в баскетболе',1,1],['Поиграть 1 минуту в большой теннис',1,1],['Победить в дартс',1,1],['Забить 10 голов в волейболе',1,1],['Сделать платёж по лизингу',1,0]],
+    mid:[['25 действий на стройке',2,0],['25 действий в порту',2,0],['25 действий в шахте',2,0],['2 круга на любом маршруте автобусника',2,1],['Выполнить 2 квеста любых клубов',4,1],['Проехать 1 станцию на метро',2,1],['Поймать 20 рыб',4,0],['Кинуть мяч питомцу 15 раз',2,0],['15 выполненных питомцем команд',2,0],['20 подходов в тренажерном зале',1,0],['Выкопать 1 сокровище',1,0],['5 раз снять 100% шкуру с животных',2,1],['Выполнить 3 заказа дальнобойщиком',2,1]],
+    coop:[['Сыграть в мафию в казино',3,1],['Выиграть гонку в картинге',1,1],['Проехать 1 уличную гонку (через тлф. ставка от 1000$)',1,1],['Выиграть 5 игр в тренировочном комплексе со ставкой (от 100$)',1,0],['Выиграть 3 любых игры на арене со ставкой (от 100$)',1,0],['3 победы в Дэнс Баттлах',2,0],['Победить в армрестлинге',1,1],['Починка авто другому игроку',2,0]],
+    skip:[['10 посылок на почте',1,0],['Прокрутить за DP серебряный или золотой кейс',10,0],['Заказ материалов для бизнеса вручную (просто прожать вкл/выкл)',1,0],['Потушить 25 «огоньков» пожарным',1,0],['Два раза оплатить смену внешности у хирурга в EMS',2,0],['Принять участие в двух аирдропах',4,0]],
+    fac:[['7 закрашенных граффити',1,0],['Сдать 5 контрабанды',2,0],['Участие в каптах/бизварах',1,0],['Сдать Хаммер с ВЗХ',3,0],['5 выданных медкарт в EMS',2,0],['Закрыть 15 вызовов в EMS',2,0],['Отредактировать 40 объявлений в WN',2,0],['Взломать 15 замков на ограбах домов или автоугонах',2,0],['Закрыть 5 кодов в силовых структурах',2,0],['Поставить на учет 2 автомобиля (для LSPD)',1,0],['Произвести 1 арест в КПЗ',1,0],['Выкупить двух человек из КПЗ',2,0],['Посадить траву в теплице',4,0],['Запустить переработку обезболивающих в лаборатории',4,0]]
+  },out=[];
+  Object.keys(D).forEach(function(c){D[c].forEach(function(r){out.push({id:uid(),cat:c,text:r[0],reward:r[1],done:!!r[2]});});});
+  return out;
+}
+function seed(){
+  var n=Date.now();
+  return {
+    ver:4, gameDay:gameIdx(), history:[], tab:'tasks', sound:true, rate:100, vip:false, x2:false, hours:0, perHour:1, vipPerHour:0, edit:false, rulesOpen:false,
+    cats:[{id:'easy',name:'Лёгкие',open:true},{id:'mid',name:'Средние',open:true},{id:'coop',name:'Совместные',open:true},{id:'skip',name:'Не хочется',open:true},{id:'fac',name:'Фракционные',open:true}],
+    timers:[
+      {id:uid(),name:'Бонус за онлайн',min:60,endsAt:null,fired:false,ex:true},
+      {id:uid(),name:'Кулдаун работы',min:15,endsAt:null,fired:false,ex:true},
+      {id:uid(),name:'Ежедневная награда',min:1440,endsAt:null,fired:false,ex:true}
+    ],
+    events:[{id:uid(),name:'Ивент сервера',at:n+3*H,fired:false,ex:true}],
+    earnings:[
+      {id:uid(),ts:n-2*H,src:'Курьер',cash:4200,bonus:2,min:35,ex:true},
+      {id:uid(),ts:n-5*H,src:'Таксист',cash:3100,bonus:1,min:30,ex:true},
+      {id:uid(),ts:n-D-3*H,src:'Дальнобойщик',cash:9800,bonus:3,min:80,ex:true},
+      {id:uid(),ts:n-2*D-H,src:'Курьер',cash:5600,bonus:3,min:50,ex:true},
+      {id:uid(),ts:n-3*D-2*H,src:'Таксист',cash:2400,bonus:1,min:25,ex:true},
+      {id:uid(),ts:n-5*D-H,src:'Курьер',cash:7000,bonus:4,min:60,ex:true}
+    ],
+    jobs:[
+      {id:uid(),name:'Курьер',pay:4200,bonus:2,min:35,ex:true},
+      {id:uid(),name:'Таксист',pay:3100,bonus:1,min:30,ex:true},
+      {id:uid(),name:'Дальнобойщик',pay:9800,bonus:3,min:80,ex:true}
+    ],
+    tasks:makeTasks(),
+    notes:[
+      {id:uid(),kind:'route',title:'Маршрут курьера',text:'Склад\nМагазин у центра\nПорт\nВозврат на склад',ts:n,ex:true},
+      {id:uid(),kind:'note',title:'Что проверить перед фармом',text:'Сколько осталось до выдачи бонуса, заправлена ли машина, есть ли свободный слот на работе.',ts:n,ex:true}
+    ]
+  };
+}
+function normalize(s){
+  var fresh=seed(),st=Object.assign(seed(),s);
+  if(!s.ver||s.ver<2){st.tasks=fresh.tasks;st.cats=fresh.cats;st.tab='tasks';st.ver=2;}
+  if(st.ver<3){
+    if(!st.tasks.some(function(t){return t.cat==='fac';})){fresh.tasks.filter(function(t){return t.cat==='fac';}).forEach(function(t){st.tasks.push(t);});}
+    st.cats.forEach(function(c){if(c.id==='fac')c.open=true;});
+    st.ver=3;
+  }
+  if(st.ver<4){
+    st.gameDay=gameIdx();
+    if(!Array.isArray(st.history))st.history=[];
+    st.ver=4;
+  }
+  return st;
+}
+function load(){
+  try{
+    var raw=localStorage.getItem(KEY);
+    if(raw){var s=JSON.parse(raw);if(s&&Array.isArray(s.timers)&&Array.isArray(s.earnings))return normalize(s);}
+  }catch(e){}
+  return seed();
+}
+var state=load();
+function save(){try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){}}
+
+/* ---------- theme ---------- */
+function applyTheme(t){if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t);}
+try{applyTheme(localStorage.getItem(THEME_KEY));}catch(e){}
+function toggleTheme(){
+  var cur=document.documentElement.getAttribute('data-theme');
+  if(!cur)cur=window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';
+  var next=cur==='dark'?'light':'dark';
+  applyTheme(next);
+  try{localStorage.setItem(THEME_KEY,next);}catch(e){}
+}
+
+/* ---------- sound & toast ---------- */
+var actx=null;
+function unlock(){
+  try{actx=actx||new (window.AudioContext||window.webkitAudioContext)();if(actx.state==='suspended')actx.resume();}catch(e){}
+}
+document.addEventListener('pointerdown',unlock,{passive:true});
+function beep(){
+  if(!state.sound||!actx)return;
+  try{
+    [0,0.28,0.56].forEach(function(t){
+      var o=actx.createOscillator(),g=actx.createGain(),at=actx.currentTime+t;
+      o.frequency.value=880;
+      g.gain.setValueAtTime(0.0001,at);
+      g.gain.exponentialRampToValueAtTime(0.25,at+0.02);
+      g.gain.exponentialRampToValueAtTime(0.0001,at+0.2);
+      o.connect(g);g.connect(actx.destination);o.start(at);o.stop(at+0.22);
+    });
+  }catch(e){}
+}
+var toastT=null;
+function toast(msg){
+  var el=$('#toast');el.textContent=msg;el.classList.add('show');
+  clearTimeout(toastT);toastT=setTimeout(function(){el.classList.remove('show');},2200);
+}
+
+/* ---------- stats ---------- */
+function taskTotals(){
+  var mult=(state.vip?2:1)*(state.x2?2:1),done=0,left=0;
+  state.tasks.forEach(function(t){if(OPTIONAL[t.cat]||t.hidden)return;if(t.done)done+=t.reward;else left+=t.reward;});
+  return {mult:mult,earned:done*mult,left:left*mult};
+}
+function stats(){
+  var t0=startOfDay(Date.now()),cash=0;
+  state.earnings.forEach(function(e){if(e.ts>=t0)cash+=e.cash;});
+  var T=taskTotals();
+  return {cash:cash,earned:T.earned,left:T.left};
+}
+function renderStats(){
+  var s=stats();
+  $('#stats').innerHTML=
+    '<div class="stat"><span>Набрано</span><b>'+fmtN(s.earned)+' BP</b></div>'+
+    '<div class="stat"><span>Осталось</span><b>'+fmtN(s.left)+' BP</b></div>';
+}
+
+/* ---------- views ---------- */
+function hasExamples(){
+  return ['timers','events'].some(function(k){return state[k].some(function(x){return x.ex;});});
+}
+function banner(){
+  return hasExamples()?'<div class="banner"><span>Сейчас показаны примеры. Убери их и вводи свои данные.</span><button class="btn sm" type="button" data-act="clear-ex">Убрать примеры</button></div>':'';
+}
+function delBtn(act,id){return '<button class="btn sm del" type="button" data-act="'+act+'" data-id="'+id+'">Удалить</button>';}
+
+function viewTimers(){
+  var now=Date.now();
+  var timers=state.timers.map(function(t){
+    var run=t.endsAt&&!t.fired, done=t.endsAt&&t.fired, total=t.min*60000;
+    var left=run?t.endsAt-now:total;
+    var pct=done?100:run?Math.max(0,Math.min(100,100-left/total*100)):0;
+    var btns=run?'<button class="btn sm" type="button" data-act="timer-reset" data-id="'+t.id+'">Сбросить</button>'
+      :'<button class="btn sm pri" type="button" data-act="timer-start" data-id="'+t.id+'">'+(done?'Старт заново':'Старт')+'</button>'+(done?'<button class="btn sm" type="button" data-act="timer-reset" data-id="'+t.id+'">Сбросить</button>':'');
+    return '<article class="card'+(done?' done':'')+'">'+
+      '<div class="rowtop"><div class="name">'+esc(t.name)+(t.ex?'<span class="tag">пример</span>':'')+'</div>'+
+      (done?'<span class="badge good">Готово</span>':run?'<span class="badge">Идёт</span>':'<span class="meta">'+t.min+' мин</span>')+'</div>'+
+      '<div class="time"'+(run?' data-left data-end="'+t.endsAt+'"':'')+'>'+(done?'00:00':fmtDur(left))+'</div>'+
+      '<div class="bar"><i style="width:'+pct+'%"'+(run?' data-bar data-end="'+t.endsAt+'" data-total="'+total+'"':'')+'></i></div>'+
+      '<div class="actions">'+btns+'<span class="grow"></span>'+delBtn('timer-del',t.id)+'</div></article>';
+  }).join('');
+  var events=state.events.slice().sort(function(a,b){return a.at-b.at;}).map(function(ev){
+    var past=ev.at<=now;
+    return '<article class="card'+(past?' done':'')+'"><div class="rowtop"><div class="name">'+esc(ev.name)+(ev.ex?'<span class="tag">пример</span>':'')+'</div>'+
+      (past?'<span class="badge good">Началось</span>':'<span class="meta">'+fmtDate(ev.at)+'</span>')+'</div>'+
+      (past?'<div class="meta" style="margin-top:6px">'+fmtDate(ev.at)+'</div>':'<div class="time" data-left data-end="'+ev.at+'">'+fmtDur(ev.at-now)+'</div>')+
+      '<div class="actions"><span class="grow"></span>'+delBtn('event-del',ev.id)+'</div></article>';
+  }).join('');
+  return banner()+
+    '<h2>Кулдауны</h2><div class="stack">'+(timers||'<div class="empty">Таймеров пока нет. Добавь первый ниже.</div>')+'</div>'+
+    '<h2>Новый таймер</h2><form class="form card" data-form="timer"><div class="fields">'+
+      '<label>Название<input id="t-name" name="name" type="text" placeholder="Бонус за онлайн" autocomplete="off"></label>'+
+      '<label>Минут<input id="t-min" name="min" type="text" inputmode="decimal" placeholder="60"></label></div>'+
+      '<button class="btn pri" type="submit">Добавить таймер</button></form>'+
+    '<h2>События сервера</h2><div class="stack">'+(events||'<div class="empty">Событий нет. Добавь ивент или акцию с датой.</div>')+'</div>'+
+    '<h2>Новое событие</h2><form class="form card" data-form="event"><div class="fields">'+
+      '<label>Название<input id="e-name" name="name" type="text" placeholder="Ивент, акция, выплата" autocomplete="off"></label>'+
+      '<label>Когда<input id="e-at" name="at" type="datetime-local"></label></div>'+
+      '<button class="btn pri" type="submit">Добавить событие</button></form>'+
+    '<h2>Сигнал</h2><div class="card"><label class="check"><input id="sound" type="checkbox"'+(state.sound?' checked':'')+'>Звук, когда таймер закончился</label>'+
+    '<p class="note">Таймеры считают по часам и не сбиваются при перезапуске страницы. Сигнал сработает, пока страница открыта. Если нужен сигнал при заблокированном экране, поставь напоминание в приложении «Напоминания» на iPhone.</p></div>';
+}
+
+function viewTasks(){
+  var T=taskTotals();
+  var bar='<section class="tbar" aria-label="Итоги и настройки">'+
+    '<div class="tctl">'+
+      '<label class="chk"><input id="vip" type="checkbox"'+(state.vip?' checked':'')+'><span>Platinum VIP</span></label>'+
+      '<label class="chk"><input id="x2" type="checkbox"'+(state.x2?' checked':'')+'><span>Акция x2</span></label>'+
+      '<button class="btn sm reset" type="button" data-act="tasks-reset">'+(resetArmed?'Точно сбросить?':'Сбросить всё')+'</button>'+
+      '<button class="btn sm ghost" type="button" data-act="edit-toggle" aria-pressed="'+(state.edit?'true':'false')+'">'+(state.edit?'Готово':'Править')+'</button>'+
+    '</div>'+
+    '<div class="tsum"><div><span>Набрано</span><b class="g num">'+fmtN(T.earned)+' BP</b></div><div><span>Осталось</span><b class="num">'+fmtN(T.left)+' BP</b></div></div>'+
+  '</section>';
+  var cols=state.cats.map(function(c){
+    var all=state.tasks.filter(function(t){return t.cat===c.id;});
+    var list=state.edit?all:all.filter(function(t){return !t.hidden;});
+    var earned=sum(all.filter(function(t){return t.done&&!t.hidden;}),'reward')*T.mult;
+    var body='';
+    if(c.open){
+      body=list.map(function(t){
+        return '<div class="trow'+(t.done?' on':'')+(t.hidden?' off':'')+'"><label class="tl"><span class="tt">'+esc(t.text)+'</span><input type="checkbox" data-task="'+t.id+'"'+(t.done?' checked':'')+'><span class="rew num">'+fmtN(t.reward*T.mult)+' BP</span></label>'+
+          (state.edit?'<button class="hb" type="button" data-act="task-hide" data-id="'+t.id+'" aria-label="'+(t.hidden?'Показать':'Скрыть')+' задание">'+(t.hidden?'Показать':'Скрыть')+'</button><button class="x" type="button" aria-label="Удалить задание" data-act="task-del" data-id="'+t.id+'">×</button>':'')+'</div>';
+      }).join('');
+      if(!list.length)body='<div class="tempty">'+(all.length?'Все задания скрыты. Нажми «Править» и «Показать», чтобы вернуть.':'Заданий нет.'+(state.edit?'':' Нажми «Править» и добавь свои.'))+'</div>';
+      if(state.edit)body+='<form class="tadd" data-form="task"><input type="hidden" name="cat" value="'+c.id+'">'+
+        '<input id="k-text-'+c.id+'" name="text" type="text" placeholder="Новое задание" autocomplete="off" aria-label="Новое задание">'+
+        '<input id="k-rew-'+c.id+'" name="reward" type="text" inputmode="decimal" placeholder="BP" aria-label="Награда в BP">'+
+        '<button class="btn sm pri" type="submit">Добавить</button></form>';
+    }
+    return '<section class="cat" style="--cat:var(--c-'+c.id+')"><button class="chead" type="button" data-act="cat-toggle" data-id="'+c.id+'" aria-expanded="'+(c.open?'true':'false')+'">'+
+      '<span class="cn">'+esc(c.name)+'</span><i class="caret"></i>'+(OPTIONAL[c.id]?'':'<span class="ce'+(earned>0?' on':'')+' num">'+(earned>0?'+':'')+fmtN(earned)+' BP</span>')+'</button>'+body+'</section>';
+  }).join('');
+  var nHid=state.tasks.filter(function(t){return t.hidden;}).length;
+  return bar+'<p class="note" style="margin:8px 2px 0">'+(state.edit?'Режим правки: у каждого задания есть кнопки «Скрыть» и «×». Скрытые задания не входят в итоги.':'Отметки сбрасываются каждый день в 07:00 по Москве. До сброса: <span class="num" data-left data-end="'+nextReset()+'">'+fmtDur(nextReset()-Date.now())+'</span>'+(nHid?' · скрыто заданий: '+nHid:''))+'</p>'+
+    '<div class="cats">'+cols+'</div>';
+}
+
+var selDay=null;
+function niceMax(m){
+  var st=[1,2,5,10,20,25,50,100,200,250,500,1000,2000,5000,10000];
+  for(var i=0;i<st.length;i++)if(m/st[i]<=4)return {step:st[i],max:Math.max(1,Math.ceil(m/st[i]))*st[i]};
+  return {step:20000,max:Math.ceil(m/20000)*20000};
+}
+function viewStats(){
+  var T=taskTotals(),N=state.statRange||14,cur=gameIdx(),days=[],i,idx,d,h;
+  var doneNow=state.tasks.filter(function(t){return t.done&&!t.hidden&&!OPTIONAL[t.cat];}).length;
+  for(i=N-1;i>=0;i--){
+    idx=cur-i;d=idxDate(idx);
+    if(i===0){days.push({d:d,bp:T.earned,done:doneNow,mult:T.mult,live:true});}
+    else{h=state.history.filter(function(x){return x.d===d;})[0];days.push({d:d,bp:h?h.bp:null,done:h?h.done:0,mult:h?h.mult:1});}
+  }
+  var have=days.filter(function(x){return x.bp!=null;}),past=have.filter(function(x){return !x.live;});
+  var scale=niceMax(Math.max.apply(null,[1].concat(have.map(function(x){return x.bp;}))));
+  var total=sum(have,'bp'),avg=past.length?sum(past,'bp')/past.length:0;
+  var best=have.reduce(function(m,x){return !m||x.bp>m.bp?x:m;},null);
+  var sel=days.filter(function(x){return x.d===selDay;})[0]||days[days.length-1];
+  var grid='',v;
+  for(v=0;v<=scale.max;v+=scale.step)grid+='<div class="gl" style="bottom:'+(v/scale.max*100)+'%"><span>'+fmtN(v)+'</span></div>';
+  var cols=days.map(function(x){
+    var none=x.bp==null,hgt=none?0:x.bp/scale.max*100;
+    return '<button class="bcol'+(none?' none':'')+(x.d===sel.d?' sel':'')+'" type="button" data-act="stat-sel" data-id="'+x.d+'" style="--h:'+hgt+'%" aria-label="'+esc(fmtDay(x.d))+': '+(none?'нет данных':fmtN(x.bp)+' BP')+'"><i></i><span class="val">'+(none?'':fmtN(x.bp))+'</span></button>';
+  }).join('');
+  var xl=days.map(function(x,k){
+    var dn=parseInt(x.d.slice(8),10),wd=new Date(x.d+'T12:00:00Z').toLocaleDateString('ru-RU',{weekday:'short',timeZone:'UTC'}),last=k===days.length-1;
+    var txt=N<=7?wd+'<br>'+dn:(N<=14||(days.length-1-k)%5===0?dn:'');
+    return '<span'+(last?' class="td"':'')+'>'+txt+'</span>';
+  }).join('');
+  var avgl=past.length?'<div class="avgl" style="bottom:'+(avg/scale.max*100)+'%"></div>':'';
+  var det=sel.bp==null?'<span>'+esc(fmtDay(sel.d))+'</span><b>нет данных</b>'
+    :'<span>'+esc(fmtDay(sel.d))+(sel.live?' · сегодня':'')+' · '+sel.done+' зад.'+(sel.mult>1?' · x'+sel.mult:'')+'</span><b class="num">'+fmtN(sel.bp)+' BP</b>';
+  var rng=[7,14,30].map(function(n){return '<button type="button" data-act="stat-range" data-id="'+n+'" aria-pressed="'+(n===N?'true':'false')+'">'+n+' дн.</button>';}).join('');
+  return '<h2>Статистика по дням</h2>'+
+    '<div class="kpis" style="margin:0 0 10px"><div class="card kpi"><b>'+fmtN(T.earned)+' BP</b><span>сегодня</span></div>'+
+    '<div class="card kpi"><b>'+(past.length?fmtN(avg)+' BP':'нет данных')+'</b><span>в среднем за день</span></div>'+
+    '<div class="card kpi"><b>'+(best?fmtN(best.bp)+' BP':'нет данных')+'</b><span>лучший день'+(best?', '+esc(fmtDay(best.d)):'')+'</span></div>'+
+    '<div class="card kpi"><b>'+fmtN(total)+' BP</b><span>всего за '+N+' дн.</span></div></div>'+
+    '<div class="seg" role="group" aria-label="Период">'+rng+'</div>'+
+    '<div class="card chartcard" style="margin-top:10px"><div class="'+(N>14?'many':'')+'"><div class="chart" style="--n:'+N+'" role="img" aria-label="BP по дням">'+grid+avgl+'<div class="bars" style="--n:'+N+'">'+cols+'</div></div>'+
+    '<div class="xl" style="--n:'+N+'">'+xl+'</div></div>'+
+    '<div class="detail">'+det+'</div></div>'+
+    '<p class="note">Игровой день идёт с 07:00 до 07:00 по Москве. Нажми на столбец, чтобы увидеть день. Пунктир показывает среднее за прошлые дни. '+(past.length?'':'Прошлые дни появятся после первого сброса в 07:00. ')+'Фракционные задания в BP не входят.</p>'+
+    '<h2>Резервная копия</h2><div class="card form"><textarea id="backup" aria-label="Данные приложения" placeholder="Нажми «Выгрузить», скопируй текст и сохрани в заметках телефона. Чтобы вернуть данные, вставь текст сюда и нажми «Загрузить»."></textarea>'+
+    '<div class="actions" style="margin-top:0"><button class="btn sm" type="button" data-act="export">Выгрузить</button><button class="btn sm" type="button" data-act="import">Загрузить</button></div>'+
+    '<p class="note">Данные и история хранятся в этом браузере. Если очистить данные Safari, они пропадут, поэтому иногда делай копию.</p></div>';
+}
+
+var VIEWS={timers:viewTimers,tasks:viewTasks,stats:viewStats};
+function render(){
+  if(!VIEWS[state.tab])state.tab='tasks';
+  $('#view').innerHTML=VIEWS[state.tab]();
+  document.querySelectorAll('.tab').forEach(function(b){
+    if(b.dataset.id===state.tab)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');
+  });
+  renderStats();
+  $('#stats').hidden=state.tab==='tasks';
+  $('.app').classList.toggle('wide',state.tab==='tasks');
+}
+
+/* ---------- actions ---------- */
+function byId(arr,id){for(var i=0;i<arr.length;i++)if(arr[i].id===id)return arr[i];return null;}
+function remove(key,id){state[key]=state[key].filter(function(x){return x.id!==id;});save();render();toast('Удалено');}
+var resetArmed=false,resetT=null;
+var ACTS={
+  'theme':function(){toggleTheme();},
+  'tab':function(id){state.tab=id;save();render();window.scrollTo(0,0);},
+  'timer-start':function(id){var t=byId(state.timers,id);if(!t)return;t.endsAt=Date.now()+t.min*60000;t.fired=false;save();render();},
+  'timer-reset':function(id){var t=byId(state.timers,id);if(!t)return;t.endsAt=null;t.fired=false;save();render();},
+  'timer-del':function(id){remove('timers',id);},
+  'event-del':function(id){remove('events',id);},
+  'stat-sel':function(id){selDay=id;render();},
+  'stat-range':function(id){state.statRange=+id;save();render();},
+  'cat-toggle':function(id){var c=byId(state.cats,id);if(!c)return;c.open=!c.open;save();render();},
+  'edit-toggle':function(){state.edit=!state.edit;save();render();},
+  'tasks-reset':function(){
+    if(!resetArmed){
+      resetArmed=true;clearTimeout(resetT);
+      resetT=setTimeout(function(){resetArmed=false;if(state.tab==='tasks')render();},3000);
+      render();return;
+    }
+    resetArmed=false;clearTimeout(resetT);
+    state.tasks.forEach(function(t){t.done=false;});save();render();toast('Всё сброшено');
+  },
+  'task-hide':function(id){var t=byId(state.tasks,id);if(!t)return;t.hidden=!t.hidden;save();render();},
+  'task-del':function(id){remove('tasks',id);},
+  'clear-ex':function(){
+    ['timers','events'].forEach(function(k){state[k]=state[k].filter(function(x){return !x.ex;});});
+    save();render();toast('Примеры убраны');
+  },
+  'export':function(){
+    var ta=$('#backup');ta.value=JSON.stringify(state);ta.focus();ta.select();
+    try{
+      navigator.clipboard.writeText(ta.value).then(function(){toast('Скопировано');},function(){toast('Текст выделен, скопируй его вручную');});
+    }catch(e){toast('Текст выделен, скопируй его вручную');}
+  },
+  'import':function(){
+    try{
+      var s=JSON.parse($('#backup').value);
+      if(!s||!Array.isArray(s.timers)||!Array.isArray(s.earnings))throw new Error('bad');
+      state=normalize(s);save();render();toast('Данные загружены');
+    }catch(e){toast('Не удалось прочитать данные');}
+  }
+};
+document.addEventListener('click',function(e){
+  var el=e.target.closest('[data-act]');
+  if(!el)return;
+  var f=ACTS[el.dataset.act];
+  if(f)f(el.dataset.id);
+});
+
+var FORMS={
+  timer:function(d){
+    var min=num(d.min);if(min<=0)return 'Укажи, сколько минут идёт таймер';
+    state.timers.push({id:uid(),name:(d.name||'').trim()||'Таймер',min:min,endsAt:null,fired:false});return 'Таймер добавлен';
+  },
+  event:function(d){
+    var at=new Date(d.at).getTime();if(!isFinite(at))return 'Укажи дату и время';
+    state.events.push({id:uid(),name:(d.name||'').trim()||'Событие',at:at,fired:at<=Date.now()});return 'Событие добавлено';
+  },
+  task:function(d){
+    var text=(d.text||'').trim();if(!text)return 'Опиши задание';
+    var cat=state.cats.some(function(c){return c.id===d.cat;})?d.cat:'easy';
+    state.tasks.push({id:uid(),cat:cat,text:text,reward:Math.max(0,num(d.reward)),done:false});return 'Задание добавлено';
+  }
+};
+var OK={'Таймер добавлен':1,'Событие добавлено':1,'Задание добавлено':1};
+document.addEventListener('submit',function(e){
+  var f=e.target.closest('form[data-form]');if(!f)return;
+  e.preventDefault();
+  var h=FORMS[f.dataset.form];if(!h)return;
+  var msg=h(Object.fromEntries(new FormData(f)));
+  if(OK[msg]){save();render();}
+  toast(msg);
+});
+document.addEventListener('change',function(e){
+  if(e.target.id==='sound'){state.sound=e.target.checked;save();if(state.sound)unlock();}
+  if(e.target.id==='vip'){state.vip=e.target.checked;save();render();}
+  if(e.target.id==='x2'){state.x2=e.target.checked;save();render();}
+  if(e.target.dataset&&e.target.dataset.task){var tk=byId(state.tasks,e.target.dataset.task);if(tk){tk.done=e.target.checked;save();render();}}
+});
+document.addEventListener('toggle',function(e){if(e.target&&e.target.id==='rules'){state.rulesOpen=e.target.open;save();}},true);
+
+/* ---------- clock ---------- */
+function tick(){
+  var now=Date.now(),changed=false;
+  if(rollover()){changed=true;toast('Новый день: отметки сброшены, итог прошлого дня сохранён');}
+  state.timers.forEach(function(t){if(t.endsAt&&!t.fired&&t.endsAt<=now){t.fired=true;changed=true;beep();}});
+  state.events.forEach(function(ev){if(!ev.fired&&ev.at<=now){ev.fired=true;changed=true;beep();}});
+  if(changed){save();render();return;}
+  document.querySelectorAll('[data-left]').forEach(function(el){el.textContent=fmtDur(+el.dataset.end-now);});
+  document.querySelectorAll('[data-bar]').forEach(function(el){
+    var left=+el.dataset.end-now,total=+el.dataset.total;
+    el.style.width=Math.max(0,Math.min(100,100-left/total*100))+'%';
+  });
+}
+var rolled=rollover();
+render();
+if(rolled)setTimeout(function(){toast('Новый день: отметки сброшены, итог прошлого дня сохранён');},400);
+setInterval(tick,1000);
+document.addEventListener('visibilitychange',function(){if(!document.hidden)tick();});
+})();
+</script>
+
+</body></html>
